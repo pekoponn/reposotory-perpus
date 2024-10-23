@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library App</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* Input and Button Styles */
+        input {
+            padding: 12px;
+            margin: 5px 0;
+            width: 100%;
+            max-width: 350px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            max-width: 350px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4338ca;
+        }
+
+        /* Book List Styles */
+        .book-list {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .book-item {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .book-item:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .book-item strong {
+            font-size: 1.2rem;
+            color: #111827;
+        }
+
+        .book-item p {
+            color: #6b7280;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            input, button {
+                max-width: 100%;
+            }
+
+            .book-list {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Library App</h1>
+
+    <!-- Form to Add Book -->
+    <h2>Add a Book</h2>
+    <input type="text" id="title" placeholder="Book Title" required>
+    <input type="text" id="author" placeholder="Author" required>
+    <input type="number" id="year" placeholder="Year" required>
+    <button onclick="addBook()">Add Book</button>
+
+    <!-- Search Book by Title -->
+    <h2>Search Book by Title</h2>
+    <input type="text" id="searchTitle" placeholder="Enter title to search">
+    <button onclick="searchByTitle()">Search</button>
+
+    <!-- Search Book by Author -->
+    <h2>Search Book by Author</h2>
+    <input type="text" id="searchAuthor" placeholder="Enter author to search">
+    <button onclick="searchByAuthor()">Search</button>
+
+    <!-- Display all books -->
+    <h2>All Books</h2>
+    <button onclick="displayAllBooks()">Display All Books</button>
+    <div id="bookList" class="book-list"></div>
+
+    <script>
+        class Book {
+            constructor(title, author, year) {
+                this.title = title;
+                this.author = author;
+                this.year = year;
+            }
+        }
+
+        class Library {
+            constructor() {
+                this.books = [];
+            }
+
+            // Add a new book to the library
+            addBook(book) {
+                this.books.push(book);
+                alert(`Book '${book.title}' added to the library.`);
+            }
+
+            // Find books by title
+            findBookByTitle(title) {
+                return this.books.filter(book => book.title.toLowerCase().includes(title.toLowerCase()));
+            }
+
+            // Find books by author
+            findBookByAuthor(author) {
+                return this.books.filter(book => book.author.toLowerCase().includes(author.toLowerCase()));
+            }
+
+            // Display all books in the library
+            getAllBooks() {
+                return this.books;
+            }
+        }
+
+        // Initialize library
+        const myLibrary = new Library();
+
+        // Function to add a book
+        function addBook() {
+            const title = document.getElementById('title').value;
+            const author = document.getElementById('author').value;
+            const year = document.getElementById('year').value;
+
+            if (title && author && year) {
+                const book = new Book(title, author, parseInt(year));
+                myLibrary.addBook(book);
+                clearInputFields();
+            } else {
+                alert('Please fill out all fields.');
+            }
+        }
+
+        // Function to search books by title
+        function searchByTitle() {
+            const title = document.getElementById('searchTitle').value;
+            const foundBooks = myLibrary.findBookByTitle(title);
+            displayBooks(foundBooks);
+        }
+
+        // Function to search books by author
+        function searchByAuthor() {
+            const author = document.getElementById('searchAuthor').value;
+            const foundBooks = myLibrary.findBookByAuthor(author);
+            displayBooks(foundBooks);
+        }
+
+        // Function to display all books
+        function displayAllBooks() {
+            const allBooks = myLibrary.getAllBooks();
+            displayBooks(allBooks);
+        }
+
+        // Function to display books in the DOM
+        function displayBooks(books) {
+            const bookList = document.getElementById('bookList');
+            bookList.innerHTML = ''; // Clear the list
+
+            if (books.length > 0) {
+                books.forEach(book => {
+                    const bookItem = document.createElement('div');
+                    bookItem.className = 'book-item';
+                    bookItem.innerHTML = `<strong>${book.title}</strong> by ${book.author} (${book.year})`;
+                    bookList.appendChild(bookItem);
+                });
+            } else {
+                bookList.innerHTML = '<p>No books found.</p>';
+            }
+        }
+
+        // Helper function to clear input fields after adding a book
+        function clearInputFields() {
+            document.getElementById('title').value = '';
+            document.getElementById('author').value = '';
+            document.getElementById('year').value = '';
+        }
+    </script>
+</body>
+</html>
